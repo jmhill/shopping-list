@@ -49,11 +49,18 @@ var server = http.createServer(function (request, response) {
     else if (request.method === 'DELETE' && urlArray[1] === 'items') {
         // TODO: delete items from list
         try {
-
+            var itemID = urlArray[2];
+            items.items.forEach(function(object, index, itemArray){
+                if (object.id == itemID) {
+                    itemArray.splice(index, 1);
+                } 
+            });
+            response.statusCode = 204; //No Content
+            response.end();
         }
         catch(e) {
             response.statusCode = 404; //URI NOT FOUND
-            response.Data = {'message': 'No item with that id was found'};
+            responseData = {'message': 'No item with that id was found'};
             response.end(JSON.stringify(responseData));
         }
     }
@@ -64,7 +71,7 @@ var server = http.createServer(function (request, response) {
         }
         catch(e) {
             response.statusCode = 404;
-            response.Data = {'message': 'No item with that id was found'};
+            responseData = {'message': 'No item with that id was found'};
             response.end(JSON.stringify(responseData));
         }
     }
