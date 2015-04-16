@@ -47,16 +47,18 @@ var server = http.createServer(function (request, response) {
         });
     }
     else if (request.method === 'DELETE' && urlArray[1] === 'items') {
-        // TODO: delete items from list
+        // Delete items in list.
         try {
+            // Grab the item id from the request url
             var itemID = urlArray[2];
+            // Go through the items array and splice out the deleted item.
             items.items.forEach(function(object, index, itemArray){
                 if (object.id == itemID) {
-                    itemArray.splice(index, 1);
+                    return itemArray.splice(index, 1);
                 } 
             });
             response.statusCode = 204; //No Content
-            response.end();
+            response.end(); // ??? Return the deleted object?
         }
         catch(e) {
             response.statusCode = 404; //URI NOT FOUND
@@ -65,15 +67,32 @@ var server = http.createServer(function (request, response) {
         }
     }
     else if (request.method === 'PUT' && urlArray[1] === 'items') {
-        // TODO: edit items in list
-        try {
-
-        }
-        catch(e) {
-            response.statusCode = 404;
-            responseData = {'message': 'No item with that id was found'};
-            response.end(JSON.stringify(responseData));
-        }
+        // Edit items in list:
+        // User hits return and sends JSON data containing the new item object.
+        var item = '';
+        request.on('data', function (chunk) {
+            item += chunk;
+        });
+        request.on('end', function () {
+            try {
+                item = JSON.parse(item);
+                var itemID = item.id;
+                // Once the new shopping item JSON object is received and parsed,
+                // go through the items array and replace the old item with the new.
+                items.items.forEach(function(object, index, itemArray) {
+                    if (object.id == itemID) {
+                        itemArray[index] = item;
+                    }
+                });
+                response.statusCode = 201;
+                response.end(); // ?? Return the edited object?
+            }
+            catch(e) {
+                response.statusCode = 404; //URI NOT FOUND
+                responseData = {'message': 'No item with that id was found'};
+                response.end(JSON.stringify(responseData));
+            }
+        });
     }
     else {
         fileServer.serve(request, response);
