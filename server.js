@@ -76,20 +76,29 @@ var server = http.createServer(function (request, response) {
         request.on('end', function () {
             try {
                 item = JSON.parse(item);
-                var itemID = item.id;
-                // Once the new shopping item JSON object is received and parsed,
-                // go through the items array and replace the old item with the new.
-                items.items.forEach(function(object, index, itemArray) {
-                    if (object.id == itemID) {
-                        itemArray[index] = item;
-                    }
+                // Check to make sure the item already exists by filtering the array by ID
+                var itemCheck = items.items.filter(function(element){
+                    return element.id === item.id;
                 });
-                response.statusCode = 201;
-                response.end(); // ?? Return the edited object?
+                if (itemCheck.length > 0) {
+                    // Once the new shopping item JSON object is received and parsed,
+                    // go through the items array and replace the old item with the new.
+                    items.items.forEach(function(object, index, itemArray) {
+                        if (object.id == item.id) {
+                            itemArray[index] = item;
+                        }
+                    });
+                    response.statusCode = 201;
+                    response.end(); // ?? Return the edited object?
+                } else {
+                    items.add(item.name);
+                    response.statusCode = 201;
+                    response.end();
+                }
             }
             catch(e) {
-                response.statusCode = 404; //URI NOT FOUND
-                responseData = {'message': 'No item with that id was found'};
+                response.statusCode = 400;
+                responseData = {'message': 'Invalid JSON'};
                 response.end(JSON.stringify(responseData));
             }
         });
