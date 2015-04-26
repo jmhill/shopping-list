@@ -47,9 +47,9 @@ var server = http.createServer(function (request, response) {
         });
     }
     else if (request.method === 'DELETE' && urlArray[1] === 'items') {
-        var itemID = urlArray[2];
+        var itemID = parseInt(urlArray[2]);
         // Delete items in list.
-        if (!isNaN(itemID)) {
+        if (typeof itemID === 'number') {
             // Grab the item id from the request url
             var deletedItem;
             // Go through the items array and splice out the deleted item.
