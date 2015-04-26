@@ -27,16 +27,15 @@ app.get('/items', function(request,response) {
 
 app.post('/items', jsonParser, function(request, response) {
     if (!request.body) {
-        return response.sendStatus(400);
+        return response.sendStatus(400); // Bad request
     }
 
     var item = items.add(request.body.name);
-    response.status(201).json(item);
+    response.status(201).json(item); 
 });
 
-app.delete('/items', function(request, response){
-    var urlArray = request.url.split('/');
-    var itemID = parseInt(urlArray[2]);
+app.delete('/items/:id', function(request, response){
+    var itemID = parseInt(request.params.id);
     // Delete items in list.
     if (typeof itemID === 'number') {
         // Grab the item id from the request url
@@ -48,12 +47,11 @@ app.delete('/items', function(request, response){
                 return itemArray.splice(index, 1);
             } 
         });
-        response.statusCode = 202; // Accepted
-        response.end(JSON.stringify(deletedItem));
+        response.status(202).json(deletedItem); // Accepted
+        
     } else {
-        response.statusCode = 404; //URI NOT FOUND
-        responseData = {'message': 'No item with that id was found'};
-        response.end(JSON.stringify(responseData));
+        var responseData = {'message': 'No item with that id was found'};
+        response.status(404).json(responseData); // Not Found
     }
 });
 
