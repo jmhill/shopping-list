@@ -16,7 +16,6 @@
   "license": "None",
   "dependencies": {
     "body-parser": "^1.12.3",
-    "express": "^4.12.3",
-    "node-static": "^0.7.6"
+    "express": "^4.12.3"
   }
 }
