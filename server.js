@@ -11,6 +11,7 @@ Items.prototype.add = function(name) {
     var item = {name: name, id: this.id};
     this.items.push(item);
     this.id += 1;
+    return item;
 };
 
 var items = new Items();
