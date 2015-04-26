@@ -55,7 +55,7 @@ app.delete('/items/:id', function(request, response){
     }
 });
 
-app.put('/items', function(request, response){
+app.put('/items/:id', function(request, response){
     // Edit items in list:
     // User hits return and sends JSON data containing the new item object.
     var item = '';
@@ -67,9 +67,8 @@ app.put('/items', function(request, response){
             item = JSON.parse(item);
         }
         catch(e) {
-            response.statusCode = 400;
-            responseData = {'message': 'Invalid JSON'};
-            response.end(JSON.stringify(responseData));
+            var responseData = {'message': 'Invalid JSON'};
+            response.status(400).json(responseData);
         }
         // Check to make sure the item already exists by filtering the array by ID
         var itemCheck = items.items.filter(function(element){
@@ -82,16 +81,14 @@ app.put('/items', function(request, response){
                 if (object.id == item.id) {
                     itemArray[index] = item;
                 }
-            });
-            response.statusCode = 201; // Created
-            response.end(JSON.stringify(item)); // Send back the item
+            }); 
+            response.status(201).json(item); // Created, Send back the item
         } else {
             // This meets the requirements in the project, but 
             // probably not a best practice to have the server just create the thing
             // if there is an error.
             items.add(item.name);
-            response.statusCode = 201; // Created
-            response.end();
+            response.status(201).end(); // Created
         }
     });
 });
