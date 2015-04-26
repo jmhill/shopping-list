@@ -1,5 +1,4 @@
-var http = require('http');
-var static = require('node-static');
+var express = require('express');
 
 var Items = function() {
     this.items = [];
@@ -17,8 +16,16 @@ items.add('Broad beans');
 items.add('Tomatoes');
 items.add('Peppers');
 
-var fileServer = new static.Server('./public');
+var app = express();
+app.use(express.static('public'));
 
+app.get('/items', function(request,response) {
+    response.json(items.items)
+});
+
+app.listen(process.env.PORT || 8080);
+
+/*
 var server = http.createServer(function (request, response) {
     var urlArray = request.url.split('/');
     if (request.method === 'GET' && request.url === '/items') {
@@ -115,3 +122,5 @@ var server = http.createServer(function (request, response) {
 server.listen(8080, function() {
     console.log('listening on localhost:' + 8080);
 });
+
+*/
