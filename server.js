@@ -95,6 +95,9 @@ app.put('/items/:id', function(request, response){
 
 app.listen(process.env.PORT || 8080);
 
+exports.app = app;
+exports.items = items;
+
 /*
 var server = http.createServer(function (request, response) {
     var urlArray = request.url.split('/');
